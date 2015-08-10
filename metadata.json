@@ -1,0 +1,14 @@
+{
+  "name": "christiaan-logstash_forwarder",
+  "version": "0.0.1",
+  "author": "christiaan",
+  "summary": "Instal and config logstash forwarder",
+  "license": "Apache 2.0",
+  "source": "https://github.com/christiaan-janssen/logstash_forwarder",
+  "project_page": "https://github.com/christiaan-janssen/logstash_forwarder",
+  "issues_url": "https://github.com/christiaan-janssen/logstash_forwarder/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+
