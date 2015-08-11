@@ -35,6 +35,11 @@
 #
 # Copyright 2015 Christiaan Janssen, unless otherwise noted.
 #
-class logstash_forwarder {
+class logstash_forwarder (
+  $logstash_server      = '127.0.0.1',
+  $logstash_server_port = 5000,
+  $timeout              = 15,
+  $file_paths           = [],
+){
   class{'logstash_forwarder::install':}
 }
