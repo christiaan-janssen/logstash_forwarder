@@ -1,35 +1,45 @@
 # == Class: logstash_forwarder
 #
-# Full description of class logstash_forwarder here.
+#  This module will install and configure Logstash-Forwarder. It will default
+# to a logstash server on you local machine (127.0.0.1:5000). It is importand
+# that you generate a certificate on you logstash server to work with
+# logstash-forwarder. (See Generat SSL Certificate at:
+# https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-4-on-ubuntu-14-04)
 #
-# === Parameters
+#  By default this module will setup logstash-forwarder to forward
+#  /var/log/syslog and /var/log/autlog
 #
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
 #
 # === Variables
 #
-# Here you should define a list of variables that this module would require.
+#   The addres or ip of your logstash server. This has to match your certificate
+#   $logstash_server      = '127.0.0.1',
 #
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
+#   Logstash server port
+#   $logstash_server_port = 5000,
+#
+#   Logstash server timeout
+#   $timeout              = 15,
+#
+#   An array with paths to logfiles and the type you want to give them
+#   $file_paths           = [],
+#
 #
 # === Examples
 #
 #  class { 'logstash_forwarder':
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
+#        logstash_server      => "192.168.0.1",
+#        logstash_server_port => 5001,
+#        timeout              => 10,
+#        file_paths           => [
+#                { path => '/var/log/bla', type =>'logtype1'},
+#                { path => '/var/log/bla2', type => 'logtype2'},
+#        ],
+# }
 #
 # === Authors
 #
-# Author Name christiaanjanssen@drunkturtle.com
+# Christiaan Janssen christiaanjanssen@drunkturtle.com
 #
 # === Copyright
 #

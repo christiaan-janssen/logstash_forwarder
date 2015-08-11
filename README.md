@@ -3,58 +3,67 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with logstash_forwarder](#setup)
+2. [Setup - The basics of getting started with logstash_forwarder](#setup)
     * [What logstash_forwarder affects](#what-logstash_forwarder-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with logstash_forwarder](#beginning-with-logstash_forwarder)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+3. [Usage - Configuration options and additional functionality](#usage)
+4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
-
-## Module Description
-
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
-
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
+Install and config logstash-forwarder. By default it will forward /var/log/syslog
+and /var/log/autlog. Other logfiles you can add via a array. Tested on Debian 7.8
+and Debian 8
 
 ## Setup
 
 ### What logstash_forwarder affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+This module will add /etc/apt/sources.list.d/elasticsearch.list and install
+the logstash-forwarder package and its startup scripts and config file
+/etc/logstash-forwarder.conf aswell as its certificate in /etc/pki/tls/certs.
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+*This module is dependent on puppetlabs-apt, as it will need it to add the repo.*
+
+Before you start you will have to generate a certificate for you logstash server
+to comunicate with the logstash-forwarder. Copy this crt file to files/logstash-forwarder.crt
+in the module dir. See https://goo.gl/30yTzx for more info.
 
 ### Beginning with logstash_forwarder
 
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
-
+To start using just add the following to you pp file.
+```puppet
+include logstash_forwarder
+```
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
+To change the workign of the module you can do the following
+
+```puppet
+class { 'logstash_forwarder':
+        logstash_server      => "192.168.0.1",
+        logstash_server_port => 5000,
+        timeout              => 15,
+        file_paths           => [
+                { path => '/var/log/logfile1', type =>'logfiletype'},
+                { path => '/var/log/logfile2', type => 'logfiletpe2'},
+        ],
+
+}
+```
+
+file_paths will add seperate entries for ever path, type pair. It will expand to
+```
+{
+    "paths": [ "/var/log/logfile1" ],
+    "fields": { "type": "logfiletype" }
+},
+```
 
 ## Reference
 
@@ -65,15 +74,13 @@ with things. (We are working on automating this section!)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+This module will only work on Debian based linuxes, as it needs apt to install
+logstash-forwarder.
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+Feel free to for or add to this module
 
-## Release Notes/Contributors/Etc **Optional**
+## Release Notes/Contributors/Etc
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+11-aug-2015: First release, default install and config
