@@ -5,23 +5,26 @@
 
 class logstash_forwarder::install {
   apt::source {'elasticsearch':
-    comment     => 'Elasticsearch repo',
-    location    => 'http://packages.elasticsearch.org/logstashforwarder/debian',
-    release     => stable,
-    repos       => 'main',
-    key         => 'D27D666CD88E42B4',
-    key_source  => 'http://packages.elasticsearch.org/GPG-KEY-elasticsearch',
-    include_src => false,
+    comment  => 'Elasticsearch repo',
+    location => 'http://packages.elasticsearch.org/logstashforwarder/debian',
+    release  => stable,
+    repos    => 'main',
+    key      => {
+      'id'     => 'D27D666CD88E42B4',
+      'source' => 'http://packages.elasticsearch.org/GPG-KEY-elasticsearch',
+    },
+    include  => {
+      'src' => false,
+    },
   }
 
-  package { 'logstash_forwarder':
+  package { 'logstash-forwarder':
     ensure  => present,
-    require => apt::source['elasticsearch'],
+    require => Apt::Source['elasticsearch'],
   }
 
-  file {'/etc/pki/tls/certs':
+  file {['/etc/pki','/etc/pki/tls','/etc/pki/tls/certs']:
     ensure => directory,
-
   }
 
   file {'/etc/pki/tls/certs/logstash-forwarder.crt':
@@ -30,18 +33,18 @@ class logstash_forwarder::install {
     group   => root,
     mode    => '0644',
     source  => 'puppet:///modules/logstash_forwarder/logstash-forwarder.crt',
-    require => file['/etc/pki/tls/certs'],
+    require => File['/etc/pki/tls/certs'],
   }
 
   service {'logstash-forwarder':
     ensure  => 'running',
-    enabled => true,
-    require => package['logstash_forwarder'],
+    enable  => true,
+    require => Package['logstash-forwarder'],
   }
 
   file {'/etc/logstash-forwarder.conf':
-    ensure   => 'present',
-    contents => template('logstash-forwarder.conf.erb'),
-    require  => package['logstash_forwarder'],
+    ensure  => 'present',
+    content => template('logstash_forwarder/logstash-forwarder.conf.erb'),
+    require => Package['logstash-forwarder'],
   }
 }

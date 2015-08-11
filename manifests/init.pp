@@ -29,13 +29,12 @@
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Author Name christiaanjanssen@drunkturtle.com
 #
 # === Copyright
 #
-# Copyright 2015 Your name here, unless otherwise noted.
+# Copyright 2015 Christiaan Janssen, unless otherwise noted.
 #
 class logstash_forwarder {
-
-
+  class{'logstash_forwarder::install':}
 }
